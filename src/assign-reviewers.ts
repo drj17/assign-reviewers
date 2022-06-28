@@ -86,8 +86,13 @@ const selectReviewers = async (
         throw new Error(`Not enough reviewers for group ${group.name}`)
       }
 
-      selectedReviewers = selectedReviewers.concat(
-        selectRandomReviewers(availableUsers, reviewerCount)
+      const reviewers = selectRandomReviewers(availableUsers, reviewerCount)
+
+      selectedReviewers = selectedReviewers.concat(reviewers)
+
+      core.setOutput(
+        `${group.name}-reviewers`,
+        reviewers.map(r => `@${r}`).join(', ')
       )
     }
   } catch (error) {
