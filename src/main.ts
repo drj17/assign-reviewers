@@ -1,16 +1,18 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import { Octokit } from '@octokit/rest'
+import { assignReviewers } from './assign-reviewers'
+import { getConfig } from './get-config'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    if (!process.env.GITHUB_REF) throw new Error('missing GITHUB_REF')
+    if (!process.env.GITHUB_REPOSITORY)
+      throw new Error('missing GITHUB_REPOSITORY')
+    //comes from {{secrets.GITHUB_TOKEN}}
+    const token = core.getInput('repo-token', { required: true })
+    const config = getConfig()
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    core.setOutput('time', new Date().toTimeString())
+    await assignReviewers(new Octokit({ auth: token }), config)
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }

@@ -1,11 +1,13 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Assign Reviewers'
+description: 'Automatically assign reviewers to Pull Requests'
+author: 'David Janas'
 inputs:
-  milliseconds: # change this
+  repo-token:
+    description: "Github token secret"
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  config:
+    description: 'Path to config file'
+    default: '.github/assign-reviewers.yml'
 runs:
   using: 'node16'
   main: 'dist/index.js'
