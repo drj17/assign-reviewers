@@ -78,10 +78,11 @@ const selectReviewers = (octokit, config, env, pr) => __awaiter(void 0, void 0, 
                     }
                 }
             }
-            if (allUsernames.length < reviewerCount) {
+            const availableUsers = allUsernames.filter(name => !selectedReviewers.includes(name));
+            if (availableUsers.length < reviewerCount) {
                 throw new Error(`Not enough reviewers for group ${group.name}`);
             }
-            selectedReviewers = selectedReviewers.concat(selectRandomReviewers(allUsernames, reviewerCount));
+            selectedReviewers = selectedReviewers.concat(selectRandomReviewers(availableUsers, reviewerCount));
         }
     }
     catch (error) {
@@ -116,10 +117,13 @@ const assignReviewers = (octokit, config, env = {
     repository: process.env.GITHUB_REPOSITORY || '',
     ref: process.env.GITHUB_HEAD_REF || ''
 }) => __awaiter(void 0, void 0, void 0, function* () {
+    core.startGroup(`Assigning reviewers for ${env.repository}`);
     const pr = yield getPR(octokit, config, env);
+    core.startGroup(`PR: ${JSON.stringify(pr)}`);
     if (!pr || pr.draft)
         return;
     const reviewers = yield selectReviewers(octokit, config, env, pr);
+    core.startGroup(`Reviewers: ${JSON.stringify(reviewers)}`);
     setReviewers(octokit, config, env, pr, reviewers);
 });
 exports.assignReviewers = assignReviewers;
@@ -226,7 +230,6 @@ function run() {
                 throw new Error('missing GITHUB_REF');
             if (!process.env.GITHUB_REPOSITORY)
                 throw new Error('missing GITHUB_REPOSITORY');
-            //comes from {{secrets.GITHUB_TOKEN}}
             const token = core.getInput('repo-token', { required: true });
             const config = (0, get_config_1.getConfig)();
             yield (0, assign_reviewers_1.assignReviewers)(new rest_1.Octokit({ auth: token }), config);

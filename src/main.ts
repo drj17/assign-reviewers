@@ -8,10 +8,9 @@ async function run(): Promise<void> {
     if (!process.env.GITHUB_REF) throw new Error('missing GITHUB_REF')
     if (!process.env.GITHUB_REPOSITORY)
       throw new Error('missing GITHUB_REPOSITORY')
-    //comes from {{secrets.GITHUB_TOKEN}}
+
     const token = core.getInput('repo-token', { required: true })
     const config = getConfig()
-    core.info(JSON.stringify(config))
     await assignReviewers(new Octokit({ auth: token }), config)
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)

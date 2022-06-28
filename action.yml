@@ -1,4 +1,4 @@
-name: 'Assign Reviewers'
+name: 'Flexible Reviewer Assignment'
 description: 'Automatically assign reviewers to Pull Requests'
 author: 'David Janas'
 inputs:
