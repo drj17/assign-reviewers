@@ -83,6 +83,7 @@ const selectReviewers = (octokit, config, env, pr) => __awaiter(void 0, void 0, 
                 throw new Error(`Not enough reviewers for group ${group.name}`);
             }
             selectedReviewers = selectedReviewers.concat(selectRandomReviewers(availableUsers, reviewerCount));
+            core.setOutput(`${group.name}-reviewers`, selectedReviewers.map(r => `@${r}`).join(','));
         }
     }
     catch (error) {

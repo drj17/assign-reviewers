@@ -89,6 +89,11 @@ const selectReviewers = async (
       selectedReviewers = selectedReviewers.concat(
         selectRandomReviewers(availableUsers, reviewerCount)
       )
+
+      core.setOutput(
+        `${group.name}-reviewers`,
+        selectedReviewers.map(r => `@${r}`).join(',')
+      )
     }
   } catch (error) {
     if (error instanceof Error) {
