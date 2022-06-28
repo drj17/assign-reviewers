@@ -127,9 +127,13 @@ export const assignReviewers = async (
     ref: process.env.GITHUB_HEAD_REF || ''
   }
 ): Promise<void> => {
+  core.info(`Assigning reviewers for ${env.repository}`)
   const pr = await getPR(octokit, config, env)
+  core.info(`PR: ${JSON.stringify(pr)}`)
+
   if (!pr || pr.draft) return
 
   const reviewers = await selectReviewers(octokit, config, env, pr)
+  core.info(`Reviewers: ${JSON.stringify(reviewers)}`)
   setReviewers(octokit, config, env, pr, reviewers)
 }

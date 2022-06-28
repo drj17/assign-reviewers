@@ -11,7 +11,7 @@ async function run(): Promise<void> {
     //comes from {{secrets.GITHUB_TOKEN}}
     const token = core.getInput('repo-token', { required: true })
     const config = getConfig()
-
+    core.info(JSON.stringify(config))
     await assignReviewers(new Octokit({ auth: token }), config)
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
